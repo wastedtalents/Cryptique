@@ -5,8 +5,9 @@ using System.Collections.Generic;
 /// <summary>
 /// Service responsible for performing actions.
 /// </summary>
-public class ActionService : Singleton<ActionService> {
-
+public class ActionService : Singleton<ActionService>
+{
+    private Dictionary<ComboAction, WeaponPreset> _presets;
     private Dictionary<ComboAction, Action> _actionMappers;
 
     private PlayerController _player;
@@ -20,6 +21,31 @@ public class ActionService : Singleton<ActionService> {
         {
             { ComboAction.BasicShot, PlayerShoot },
             { ComboAction.HeavyShot, PlayerHeavyShoot }
+        };
+
+        // this should be loaded from xml.
+        _presets = new Dictionary<ComboAction, WeaponPreset>()
+        {
+            { ComboAction.BasicShot, new WeaponPreset() // basic.
+            {
+                bulletPrefab = SceneManager.Instance.WeaponManager.basicShotPrefab,
+                bulletCount =  10,
+                bulletRandomness = 0.15f,
+                bulletSpacing = 1,
+                bulletSpeed = 2.5f,
+                bulletSpread = 2.5f,
+                weaponFireRate = 1
+            }},
+            { ComboAction.HeavyShot, new WeaponPreset() // heavy.
+            {
+                bulletPrefab = SceneManager.Instance.WeaponManager.basicShotPrefab,
+                bulletCount =  2,
+                bulletRandomness = 1,
+                bulletSpacing = 2,
+                bulletSpeed = 5,
+                bulletSpread = 1,
+                weaponFireRate = 2
+            } }
         };
     }
 
@@ -46,6 +72,7 @@ public class ActionService : Singleton<ActionService> {
     /// </summary>
     protected void PlayerShoot()
     {
+        _player.ApplyWeapon(_presets[ComboAction.BasicShot]);
         _player.Shoot();
     }
 
@@ -54,6 +81,7 @@ public class ActionService : Singleton<ActionService> {
     /// </summary>
     protected void PlayerHeavyShoot()
     {
+        _player.ApplyWeapon(_presets[ComboAction.HeavyShot]);
         _player.Shoot();
     }
 }

@@ -220,7 +220,8 @@ public class PlayerController : MonoBehaviour {
     /// <param name="preset"></param>
     public void ApplyWeapon(WeaponPreset preset)
     {
-        _currentWeapon = preset;
+        if (_currentWeapon == preset)
+            return;
 
         _bulletCount = preset.bulletCount;
         _bulletRandomness = preset.bulletRandomness;
@@ -238,6 +239,12 @@ public class PlayerController : MonoBehaviour {
             gunPointRight = preset.gunPointRight;
         if (preset.gunPointUp != null)
             gunPointUp = preset.gunPointUp;
+
+        // setup cooldowns.
+        if(_currentWeapon != null)
+            _currentWeapon.SetCooldown(_coolDown, Time.time);
+        _currentWeapon = preset;
+        _coolDown = _currentWeapon.RemainingCooldown;
     }
 
     /// <summary>
