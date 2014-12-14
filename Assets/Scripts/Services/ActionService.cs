@@ -18,7 +18,8 @@ public class ActionService : Singleton<ActionService> {
 
         _actionMappers = new Dictionary<ComboAction, Action>()
         {
-            { ComboAction.BasicShot, PlayerShoot }
+            { ComboAction.BasicShot, PlayerShoot },
+            { ComboAction.HeavyShot, PlayerHeavyShoot }
         };
     }
 
@@ -34,16 +35,24 @@ public class ActionService : Singleton<ActionService> {
 
     public void Execute(ComboAction action)
     {
-        if (_actionMappers.ContainsKey(action))
-        {
+        if (_actionMappers.ContainsKey(action)) // use predefined.
             _actionMappers[action]();
-        }
+        else // oooor generic.
+            _player.Skill(SkillService.Instance.GetSkill(action));
     }
 
     /// <summary>
     /// Playa shoots.
     /// </summary>
     protected void PlayerShoot()
+    {
+        _player.Shoot();
+    }
+
+    /// <summary>
+    /// Playa shoots.
+    /// </summary>
+    protected void PlayerHeavyShoot()
     {
         _player.Shoot();
     }

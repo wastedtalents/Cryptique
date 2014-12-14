@@ -36,7 +36,11 @@ public class ComboTracker : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	   
+        if (_comboStarted && (Time.time - _lastComboStepTime > comboMoveSpanTime))
+        {
+            _comboStarted = false;
+            CheckCombo(_comboChars); // check if we have a combo.
+        }
 	}
 
     /// <summary>
@@ -45,22 +49,15 @@ public class ComboTracker : MonoBehaviour {
     /// <param name="left"></param>
     internal void Register(SKeyCode code)
     {
-        if(Time.time - _lastComboStepTime > comboMoveSpanTime)
-        {
-            _comboStarted = false;
-        }
-        if(!_comboStarted)
+        _lastComboStepTime = Time.time;
+        if (!_comboStarted)
         {
             _comboStarted = true;
-            _lastComboStepTime = Time.time;
             _comboChars.Length = 0;
             _comboChars.Append(_codeMappers[code]);
         }
         else
-        {
             _comboChars.Append(_codeMappers[code]);
-            CheckCombo(_comboChars); // check if we have a combo.
-        }
     }
 
     /// <summary>
@@ -71,7 +68,7 @@ public class ComboTracker : MonoBehaviour {
     {
         var chars = comboChars.ToString();
         var combo = combos.SingleOrDefault(com => com.ComboString.Equals(chars));
-        if(combo != null) // we've found a combo!.
+        if (combo != null) // we've found a combo!.
         {
             ActionService.Instance.Execute(combo.action);
             _comboStarted = false;

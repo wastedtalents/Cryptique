@@ -1,11 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Basic direction.
+/// </summary>
+public enum Direction
+{
+    Up,
+    Down,
+    Left,
+    Right
+}
+
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(ComboTracker))]
 public class PlayerController : MonoBehaviour {
 
     public PlayerData playerData;
+    private WeaponPreset _currentWeapon;
 
     #region Gun settings.
 
@@ -129,22 +141,6 @@ public class PlayerController : MonoBehaviour {
             return;
 
         CalculateAimAndFacingAngles(_tempVector);
-
-//        // up.
-//        if (InputService.Instance.UpHeld)
-//            rigidbody2D.AddForce(Vector2.up * playerData.Speed * Time.deltaTime);
-//
-//        // down.
-//        if (InputService.Instance.DownHeld)
-//            rigidbody2D.AddForce(-Vector2.up * playerData.Speed * Time.deltaTime);
-//
-//        // left.
-//        if (InputService.Instance.LeftHeld)
-//            rigidbody2D.AddForce(-Vector2.right * playerData.Speed * Time.deltaTime);
-//
-//        // right.
-//        if (InputService.Instance.RightHeld)
-//            rigidbody2D.AddForce(Vector2.right * playerData.Speed * Time.deltaTime);
     }
 
     /// <summary>
@@ -224,10 +220,33 @@ public class PlayerController : MonoBehaviour {
     /// <param name="preset"></param>
     public void ApplyWeapon(WeaponPreset preset)
     {
+        _currentWeapon = preset;
+
         _bulletCount = preset.bulletCount;
         _bulletRandomness = preset.bulletRandomness;
         _bulletSpacing = preset.bulletSpacing;
         _bulletSpeed = preset.bulletSpeed;
         _bulletSpread = preset.bulletSpread;
+        _weaponFireRate = preset.weaponFireRate;
+
+        // override gunpoints.
+        if (preset.gunPointDown != null)
+            gunPointDown = preset.gunPointDown;
+        if (preset.gunPointLeft != null)
+            gunPointLeft = preset.gunPointLeft;
+        if (preset.gunPointRight != null)
+            gunPointRight = preset.gunPointRight;
+        if (preset.gunPointUp != null)
+            gunPointUp = preset.gunPointUp;
+    }
+
+    /// <summary>
+    /// Fire up a skill.
+    /// </summary>
+    /// <param name="skillPreset"></param>
+    internal void Skill(SkillPreset skillPreset)
+    {
+        // For now just start.
+        StartCoroutine(skillPreset.Execute(null));
     }
 }
