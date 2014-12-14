@@ -15,3 +15,5 @@ ale masz o jeden rzad ekwipunku mniej
 i jeden skill mniej
 ale za to jestes siniejszy
 
+Do kolizji
+mozna wykorzystywac INvisibleObstacle tylko dla pathfindingu.
